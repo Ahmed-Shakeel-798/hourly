@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   bool _loading = true;
   bool _hasPermission = false;
+  bool _checkinsEnabled = false;
   Duration _total = Duration.zero;
   List<AppUsage> _apps = [];
   List<ActivityLog> _logs = [];
@@ -58,10 +59,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       total = apps.fold(Duration.zero, (s, a) => s + a.time);
     }
     final logs = await _db.logsForDay(today);
+    final enabled = await NotificationService.instance.isCheckinEnabled();
 
     if (!mounted) return;
     setState(() {
       _hasPermission = granted;
+      _checkinsEnabled = enabled;
       _total = total;
       _apps = apps;
       _logs = logs;
@@ -70,11 +73,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _enableTracking() async {
-    await NotificationService.instance.scheduleHourlyCheckin();
-    await NotificationService.instance.scheduleDailyReport();
+    await NotificationService.instance.enableCheckins();
     if (!mounted) return;
+    setState(() => _checkinsEnabled = true);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Hourly check-ins enabled.')),
+    );
+  }
+
+  Future<void> _disableTracking() async {
+    await NotificationService.instance.disableCheckins();
+    if (!mounted) return;
+    setState(() => _checkinsEnabled = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Hourly check-ins turned off.')),
     );
   }
 
@@ -207,12 +219,41 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
           ),
           const SizedBox(height: 20),
-          FilledButton(
-            onPressed: _enableTracking,
-            child: const Text('Enable hourly check-ins'),
-          ),
+          _checkinsEnabled ? _checkinsOnControl() : _enableButton(),
         ],
       ),
+    );
+  }
+
+  Widget _enableButton() => FilledButton(
+        onPressed: _enableTracking,
+        child: const Text('Enable hourly check-ins'),
+      );
+
+  Widget _checkinsOnControl() {
+    return Column(
+      children: [
+        const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.check_circle, size: 18, color: AppTheme.ink),
+            SizedBox(width: 8),
+            Text(
+              'Hourly check-ins on',
+              style: TextStyle(
+                color: AppTheme.ink,
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+            ),
+          ],
+        ),
+        TextButton(
+          onPressed: _disableTracking,
+          style: TextButton.styleFrom(foregroundColor: AppTheme.muted),
+          child: const Text('Turn off'),
+        ),
+      ],
     );
   }
 

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -11,6 +12,7 @@ import 'database_service.dart';
 const String kCheckinChannelId = 'checkin_channel';
 const String kReportChannelId = 'report_channel';
 const String kReplyActionId = 'reply_action';
+const String kCheckinEnabledKey = 'checkins_enabled';
 
 const int kHourlyCheckinId = 1001;
 const int kDailyReportId = 2001;
@@ -126,6 +128,28 @@ class NotificationService {
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
     );
+  }
+
+  /// Turn the hourly check-in + daily report on, and remember it.
+  Future<void> enableCheckins() async {
+    await scheduleHourlyCheckin();
+    await scheduleDailyReport();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(kCheckinEnabledKey, true);
+  }
+
+  /// Turn them off and remember it.
+  Future<void> disableCheckins() async {
+    await _plugin.cancel(kHourlyCheckinId);
+    await _plugin.cancel(kDailyReportId);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(kCheckinEnabledKey, false);
+  }
+
+  /// Whether the user has enabled hourly check-ins.
+  Future<bool> isCheckinEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(kCheckinEnabledKey) ?? false;
   }
 
   Future<void> cancelAll() => _plugin.cancelAll();
