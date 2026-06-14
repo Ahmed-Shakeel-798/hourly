@@ -248,6 +248,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
           ],
         ),
+        const SizedBox(height: 4),
+        const Text(
+          '8 AM – 10 PM, on the hour',
+          style: TextStyle(color: AppTheme.muted, fontSize: 12),
+        ),
         TextButton(
           onPressed: _disableTracking,
           style: TextButton.styleFrom(foregroundColor: AppTheme.muted),

@@ -14,8 +14,13 @@ const String kReportChannelId = 'report_channel';
 const String kReplyActionId = 'reply_action';
 const String kCheckinEnabledKey = 'checkins_enabled';
 
-const int kHourlyCheckinId = 1001;
+const int kHourlyCheckinId = 1001; // legacy single repeat id + immediate test
 const int kDailyReportId = 2001;
+
+/// Each waking-hour check-in is scheduled at HH:00 with id = base + hour.
+const int kHourlyCheckinBaseId = 1100;
+const int kCheckinStartHour = 8; // first check-in at 08:00
+const int kCheckinEndHour = 22; // last check-in at 22:00 (inclusive)
 
 /// Bumped whenever a check-in is saved, so the UI can refresh itself.
 final ValueNotifier<int> logsRevision = ValueNotifier<int>(0);
@@ -98,16 +103,20 @@ class NotificationService {
     return const NotificationDetails(android: android);
   }
 
-  /// Fires every hour with an inline reply field.
+  /// Schedules a check-in at the top of every waking hour (08:00–22:00),
+  /// each repeating daily, with an inline reply field.
   Future<void> scheduleHourlyCheckin() async {
-    await _plugin.periodicallyShow(
-      kHourlyCheckinId,
-      'Check-in',
-      'What are you doing right now?',
-      RepeatInterval.hourly,
-      _checkinDetails,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-    );
+    for (int hour = kCheckinStartHour; hour <= kCheckinEndHour; hour++) {
+      await _plugin.zonedSchedule(
+        kHourlyCheckinBaseId + hour,
+        'Check-in',
+        'What are you doing right now?',
+        _nextInstanceOf(hour, 0),
+        _checkinDetails,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time, // repeat daily at HH:00
+      );
+    }
   }
 
   /// Daily reminder at 21:00 that the report is ready.
@@ -132,6 +141,7 @@ class NotificationService {
 
   /// Turn the hourly check-in + daily report on, and remember it.
   Future<void> enableCheckins() async {
+    await _cancelAllCheckins(); // clear any prior schedule (incl. legacy id)
     await scheduleHourlyCheckin();
     await scheduleDailyReport();
     final prefs = await SharedPreferences.getInstance();
@@ -140,10 +150,17 @@ class NotificationService {
 
   /// Turn them off and remember it.
   Future<void> disableCheckins() async {
-    await _plugin.cancel(kHourlyCheckinId);
-    await _plugin.cancel(kDailyReportId);
+    await _cancelAllCheckins();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(kCheckinEnabledKey, false);
+  }
+
+  Future<void> _cancelAllCheckins() async {
+    await _plugin.cancel(kHourlyCheckinId); // legacy single repeat
+    for (int hour = 0; hour < 24; hour++) {
+      await _plugin.cancel(kHourlyCheckinBaseId + hour);
+    }
+    await _plugin.cancel(kDailyReportId);
   }
 
   /// Whether the user has enabled hourly check-ins.
