@@ -1,4 +1,4 @@
-# Mobile Monitor — setup
+# Hourly — setup
 
 A minimalist Android app that tracks per-app screen time, asks "what are you
 doing?" once an hour (with an inline reply in the notification), and shows a
@@ -43,7 +43,7 @@ This project ships the Dart source + `pubspec.yaml`. Generate the native
 `android/` scaffolding (this won't touch the files in `lib/`):
 
 ```powershell
-flutter create . --platforms=android --project-name mobile_monitor
+flutter create . --platforms=android --project-name hourly
 flutter pub get
 ```
 
@@ -129,7 +129,7 @@ flutter run
 ```
 
 In the app:
-1. Tap **Grant access** → toggle **Mobile Monitor** on in the Usage-access list,
+1. Tap **Grant access** → toggle **Hourly** on in the Usage-access list,
    then return to the app. Screen time will populate.
 2. Tap **Enable hourly check-ins** to start the every-hour notification and the
    9 PM daily-report reminder.

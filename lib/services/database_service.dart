@@ -22,7 +22,7 @@ class DatabaseService {
 
   Future<Database> _open() async {
     final dir = await getApplicationDocumentsDirectory();
-    final path = p.join(dir.path, 'mobile_monitor.db');
+    final path = p.join(dir.path, 'hourly.db');
     return openDatabase(
       path,
       version: 1,

@@ -7,16 +7,16 @@ import 'theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService.instance.init();
-  runApp(const MobileMonitorApp());
+  runApp(const HourlyApp());
 }
 
-class MobileMonitorApp extends StatelessWidget {
-  const MobileMonitorApp({super.key});
+class HourlyApp extends StatelessWidget {
+  const HourlyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mobile Monitor',
+      title: 'Hourly',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       home: const HomeScreen(),

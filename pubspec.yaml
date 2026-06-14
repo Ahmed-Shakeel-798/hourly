@@ -1,4 +1,4 @@
-name: mobile_monitor
+name: hourly
 description: "Minimalist screen-time tracker with hourly check-ins and daily reports."
 publish_to: 'none'
 version: 1.0.0+1

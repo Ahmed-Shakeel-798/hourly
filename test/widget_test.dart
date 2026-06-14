@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_monitor/utils/formatting.dart';
+import 'package:hourly/utils/formatting.dart';
 
 void main() {
   test('formatDuration is compact and human-readable', () {
