@@ -115,7 +115,7 @@ class _ReportScreenState extends State<ReportScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 30),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
@@ -184,9 +184,9 @@ class _ReportScreenState extends State<ReportScreen> {
                   child: LinearProgressIndicator(
                     value: (app.time.inSeconds / max).clamp(0.0, 1.0),
                     minHeight: 6,
-                    backgroundColor: Colors.white,
+                    backgroundColor: AppTheme.surface(context),
                     valueColor:
-                        const AlwaysStoppedAnimation<Color>(AppTheme.ink),
+                        AlwaysStoppedAnimation<Color>(AppTheme.ink(context)),
                   ),
                 ),
               ],

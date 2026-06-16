@@ -5,6 +5,7 @@ import '../models/activity_log.dart';
 import '../models/app_usage.dart';
 import '../services/database_service.dart';
 import '../services/notification_service.dart';
+import '../services/theme_controller.dart';
 import '../services/usage_service.dart';
 import '../theme.dart';
 import '../utils/formatting.dart';
@@ -108,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       appBar: AppBar(
         title: const Text('Today'),
         actions: [
+          const _ThemeMenuButton(),
           IconButton(
             tooltip: 'Report',
             icon: const Icon(Icons.bar_chart_rounded),
@@ -118,8 +120,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppTheme.ink,
-        foregroundColor: Colors.white,
+        backgroundColor: AppTheme.ink(context),
+        foregroundColor: AppTheme.onInk(context),
         elevation: 0,
         onPressed: _addManualLog,
         child: const Icon(Icons.add),
@@ -163,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
@@ -195,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
@@ -233,15 +235,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget _checkinsOnControl() {
     return Column(
       children: [
-        const Row(
+        Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.check_circle, size: 18, color: AppTheme.ink),
-            SizedBox(width: 8),
+            Icon(Icons.check_circle, size: 18, color: AppTheme.ink(context)),
+            const SizedBox(width: 8),
             Text(
               'Hourly check-ins on',
               style: TextStyle(
-                color: AppTheme.ink,
+                color: AppTheme.ink(context),
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
               ),
@@ -339,9 +341,9 @@ class _AppRow extends StatelessWidget {
             child: LinearProgressIndicator(
               value: fraction,
               minHeight: 6,
-              backgroundColor: AppTheme.surface,
+              backgroundColor: AppTheme.surface(context),
               valueColor:
-                  const AlwaysStoppedAnimation<Color>(AppTheme.ink),
+                  AlwaysStoppedAnimation<Color>(AppTheme.ink(context)),
             ),
           ),
         ],
@@ -360,7 +362,7 @@ class _LogRow extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -394,6 +396,55 @@ class _Empty extends StatelessWidget {
       );
 }
 
+/// AppBar action: choose System / Light / Dark theme.
+class _ThemeMenuButton extends StatelessWidget {
+  const _ThemeMenuButton();
+
+  IconData _iconFor(ThemeMode m) {
+    switch (m) {
+      case ThemeMode.light:
+        return Icons.light_mode_outlined;
+      case ThemeMode.dark:
+        return Icons.dark_mode_outlined;
+      case ThemeMode.system:
+        return Icons.brightness_auto_outlined;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = ThemeController.instance;
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: controller.mode,
+      builder: (context, current, _) => PopupMenuButton<ThemeMode>(
+        tooltip: 'Theme',
+        icon: Icon(_iconFor(current)),
+        onSelected: controller.setMode,
+        itemBuilder: (context) => [
+          for (final m in ThemeMode.values)
+            PopupMenuItem<ThemeMode>(
+              value: m,
+              child: Row(
+                children: [
+                  Icon(_iconFor(m), size: 20, color: AppTheme.ink(context)),
+                  const SizedBox(width: 12),
+                  Text(switch (m) {
+                    ThemeMode.light => 'Light',
+                    ThemeMode.dark => 'Dark',
+                    ThemeMode.system => 'System',
+                  }),
+                  const Spacer(),
+                  if (m == current)
+                    Icon(Icons.check, size: 18, color: AppTheme.ink(context)),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class _AddLogDialog extends StatefulWidget {
   const _AddLogDialog();
 
@@ -413,7 +464,7 @@ class _AddLogDialogState extends State<_AddLogDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.surface(context),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: const Text('What are you doing?'),
       content: TextField(

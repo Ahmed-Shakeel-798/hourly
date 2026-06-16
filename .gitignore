@@ -50,3 +50,6 @@ app.*.map.json
 # Nested Android Gradle build output
 android/build/
 app/build/
+
+# Renamed release artifacts
+/dist/
