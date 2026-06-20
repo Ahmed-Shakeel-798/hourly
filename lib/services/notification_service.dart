@@ -113,7 +113,7 @@ class NotificationService {
         'What are you doing right now?',
         _nextInstanceOf(hour, 0),
         _checkinDetails,
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time, // repeat daily at HH:00
       );
     }
@@ -134,7 +134,7 @@ class NotificationService {
       'Tap to see today\'s screen time and check-ins.',
       _nextInstanceOf(hour, minute),
       const NotificationDetails(android: android),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }

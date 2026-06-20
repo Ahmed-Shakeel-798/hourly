@@ -255,10 +255,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           '8 AM – 10 PM, on the hour',
           style: TextStyle(color: AppTheme.muted, fontSize: 12),
         ),
-        TextButton(
-          onPressed: _disableTracking,
-          style: TextButton.styleFrom(foregroundColor: AppTheme.muted),
-          child: const Text('Turn off'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: () async {
+                await NotificationService.instance.sendTestCheckin();
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Test check-in sent.')),
+                );
+              },
+              style: TextButton.styleFrom(foregroundColor: AppTheme.muted),
+              child: const Text('Send a test'),
+            ),
+            const Text('·', style: TextStyle(color: AppTheme.muted)),
+            TextButton(
+              onPressed: _disableTracking,
+              style: TextButton.styleFrom(foregroundColor: AppTheme.muted),
+              child: const Text('Turn off'),
+            ),
+          ],
         ),
       ],
     );
