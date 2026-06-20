@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/home_screen.dart';
+import 'screens/root_screen.dart';
 import 'services/notification_service.dart';
 import 'services/theme_controller.dart';
 import 'theme.dart';
@@ -25,7 +25,7 @@ class HourlyApp extends StatelessWidget {
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
         themeMode: mode,
-        home: const HomeScreen(),
+        home: const RootScreen(),
       ),
     );
   }

@@ -100,6 +100,26 @@ class AppTheme {
         surfaceTintColor: surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: bg,
+        surfaceTintColor: bg,
+        indicatorColor: surface,
+        elevation: 0,
+        height: 64,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) => IconThemeData(
+            color: states.contains(WidgetState.selected) ? ink : muted,
+          ),
+        ),
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: states.contains(WidgetState.selected) ? ink : muted,
+          ),
+        ),
+      ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: ink,
