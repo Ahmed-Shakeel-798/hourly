@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'mute_screen.dart';
 import 'screen_time_screen.dart';
 import 'today_screen.dart';
 
-/// Bottom-nav shell: Today (tasks + check-ins) and Screen time.
+/// Bottom-nav shell: Today (tasks + check-ins), Screen time and Mute.
 class RootScreen extends StatefulWidget {
   const RootScreen({super.key});
 
@@ -14,7 +15,7 @@ class RootScreen extends StatefulWidget {
 class _RootScreenState extends State<RootScreen> {
   int _index = 0;
 
-  static const _screens = [TodayScreen(), ScreenTimeScreen()];
+  static const _screens = [TodayScreen(), ScreenTimeScreen(), MuteScreen()];
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +34,11 @@ class _RootScreenState extends State<RootScreen> {
             icon: Icon(Icons.bar_chart_outlined),
             selectedIcon: Icon(Icons.bar_chart),
             label: 'Screen time',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.notifications_off_outlined),
+            selectedIcon: Icon(Icons.notifications_off),
+            label: 'Mute',
           ),
         ],
       ),
