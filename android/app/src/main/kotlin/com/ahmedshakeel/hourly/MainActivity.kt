@@ -30,6 +30,10 @@ class MainActivity : FlutterActivity() {
                     "openNotificationSettings" -> {
                         result.success(openNotificationSettings(call.argument<String>("package")))
                     }
+                    "refreshWidget" -> {
+                        MoodWidgetProvider.updateAll(this)
+                        result.success(true)
+                    }
                     else -> result.notImplemented()
                 }
             }

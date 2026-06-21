@@ -33,6 +33,11 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    // Compile JVM unit tests written in Kotlin under src/test/kotlin.
+    sourceSets {
+        getByName("test").java.srcDirs("src/test/kotlin")
+    }
 }
 
 kotlin {
@@ -47,4 +52,5 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    testImplementation("junit:junit:4.13.2")
 }

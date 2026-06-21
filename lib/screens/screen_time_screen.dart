@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/app_usage.dart';
 import '../services/usage_service.dart';
+import '../services/widget_service.dart';
 import '../theme.dart';
 import '../utils/formatting.dart';
 import '../widgets/day_selector.dart';
@@ -40,6 +41,11 @@ class _ScreenTimeScreenState extends State<ScreenTimeScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) _load();
+    // Keep the home-screen mood widget in sync as the user enters/leaves the app.
+    if (state == AppLifecycleState.resumed ||
+        state == AppLifecycleState.paused) {
+      WidgetService.refresh();
+    }
   }
 
   Future<void> _load() async {
